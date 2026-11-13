@@ -1,0 +1,13 @@
+{
+  "name": "KAMY Merchant Studio",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "postCreateCommand": "npm install && cp -n .env.example .env.local",
+  "postStartCommand": "sed -i \"s|^NEXT_PUBLIC_SITE_URL=.*|NEXT_PUBLIC_SITE_URL=https://${CODESPACE_NAME}-3000.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}|\" .env.local",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "KAMY Studio", "onAutoForward": "openBrowser" }
+  },
+  "customizations": {
+    "vscode": { "extensions": ["bradlc.vscode-tailwindcss", "dbaeumer.vscode-eslint"] }
+  }
+}
