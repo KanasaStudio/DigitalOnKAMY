@@ -77,3 +77,9 @@ supabase/migrations/   schema, RLS, storage, reference data (already applied to 
 4. Di Supabase Dashboard → Authentication → URL Configuration, tambahkan Redirect URL
    `https://*.app.github.dev/**` agar email konfirmasi kembali ke Codespace.
    Site URL boleh tetap sementara sampai domain siap.
+
+## Pratinjau statis di GitHub Pages
+
+`node scripts/build-pages.mjs` membuat salinan statis mode demo di `./out` (data contoh, tanpa daftar/masuk asli,
+karena GitHub Pages tidak punya server). Workflow `.github/workflows/pages.yml` men-deploy-nya ke
+`https://kanasastudio.github.io/DigitalOnKAMY/`. Aplikasi sungguhan tetap `npm run dev` / Vercel.
