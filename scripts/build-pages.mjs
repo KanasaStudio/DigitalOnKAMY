@@ -53,7 +53,7 @@ export async function createSupabaseServerClient(): Promise<any> { throw new Err
 `);
 patch("src/app/studio/layout.tsx", (s) =>
   s.replace(`import { cookies } from "next/headers";\n`, "").replace(`(await cookies()).get("kamy_rail")?.value === "collapsed"`, "false"));
-patch("src/app/c/[slug]/page.tsx", (s) => s + `\nexport const dynamicParams = false;\nexport function generateStaticParams() { return [{ slug: "nusantara-lowpoly" }]; }\n`);
+patch("src/app/(market)/c/[slug]/page.tsx", (s) => s + `\nexport const dynamicParams = false;\nexport function generateStaticParams() { return CREATORS.map((c) => ({ slug: c.slug })); }\n`.replace("export const dynamicParams", "import { CREATORS } from \"@/lib/market/catalog\";\nexport const dynamicParams"));
 patch("src/app/studio/[section]/page.tsx", (s) => s + `\nexport const dynamicParams = false;\nexport function generateStaticParams() { return ["products","orders","customers","reviews","analytics","earnings","promotions","messages","team","help"].map((section) => ({ section })); }\n`);
 
 // Static export has no query string at build time: use defaults.

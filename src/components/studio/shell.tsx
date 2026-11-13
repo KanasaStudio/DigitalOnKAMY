@@ -101,7 +101,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
             collapsed && "justify-center px-0",
           )}
         >
-          <Icon name={item.icon} size={18} className={active ? "text-mint" : undefined} />
+          <Icon name={item.icon} size={22} className={active ? "text-mint" : undefined} />
           <span className={cn(collapsed && "sr-only")}>{label}</span>
         </Link>
       </li>
@@ -179,7 +179,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
             onClick={() => setPaletteOpen(true)}
             className="ml-auto hidden h-10 w-72 items-center gap-2.5 rounded-[10px] border border-line-strong bg-surface px-3 text-sm text-silver transition-colors hover:border-silver hover:text-cloud md:ml-0 md:flex"
           >
-            <Icon name="search" size={16} />
+            <Icon name="search" size={18} />
             <span className="flex-1 text-left">{t("nav.search")}</span>
             <Kbd>⌘K</Kbd>
           </button>
@@ -192,7 +192,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
               className="inline-flex h-10 items-center gap-2 rounded-[10px] px-2.5 text-[13px] font-semibold text-silver transition-colors hover:bg-cloud-hover hover:text-cloud"
               aria-label={`${t("common.language")}: ${t(`common.languages.${locale}`)}`}
             >
-              <Icon name="language" size={18} />
+              <Icon name="language" size={20} />
               <span className="font-mono uppercase">{locale}</span>
             </button>
             {publicHref ? (
@@ -231,7 +231,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
                   aria-current={active ? "page" : undefined}
                   className={cn("flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-semibold", active ? "text-cloud" : "text-silver")}
                 >
-                  <Icon name={item.icon} size={20} className={active ? "text-mint" : undefined} />
+                  <Icon name={item.icon} size={24} className={active ? "text-mint" : undefined} />
                   {t(item.label)}
                 </Link>
               </li>
@@ -244,7 +244,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
               aria-haspopup="dialog"
               className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-semibold text-silver"
             >
-              <Icon name="menu" size={20} />
+              <Icon name="menu" size={24} />
               {t("nav.more")}
             </button>
           </li>
@@ -266,7 +266,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
                         isActive(pathname, item.href) ? "border-mint-line bg-mint-tint text-cloud" : "text-cloud",
                       )}
                     >
-                      <Icon name={item.icon} size={18} />
+                      <Icon name={item.icon} size={22} />
                       {t(item.label)}
                     </Link>
                   </li>
@@ -278,7 +278,7 @@ export function StudioShell({ children, storeName, avatarUrl, userName, demo, in
             {NAV_UTILITY.map((item) => (
               <li key={item.id}>
                 <Link href={item.href} className="flex h-12 items-center gap-2.5 rounded-[10px] border border-line px-3 text-sm font-semibold text-cloud">
-                  <Icon name={item.icon} size={18} />
+                  <Icon name={item.icon} size={22} />
                   {t(item.label)}
                 </Link>
               </li>

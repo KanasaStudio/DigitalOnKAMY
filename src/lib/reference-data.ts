@@ -14,12 +14,13 @@ function publicClient() {
 }
 
 const FALLBACK_CATEGORIES: Category[] = [
-  { id: "3d-game", parent_id: null, name_id: "3D & Game", name_en: "3D & Game", icon: "3d", sort_order: 10 },
-  { id: "ui-ux", parent_id: null, name_id: "UI / UX", name_en: "UI / UX", icon: "uiux", sort_order: 20 },
+  { id: "3d-game", parent_id: null, name_id: "3D & Aset Game", name_en: "3D & Game Assets", icon: "3d", sort_order: 10 },
+  { id: "ui-ux", parent_id: null, name_id: "UI/UX & Web", name_en: "UI/UX & Web", icon: "uiux", sort_order: 20 },
   { id: "templates", parent_id: null, name_id: "Template", name_en: "Templates", icon: "templates", sort_order: 30 },
-  { id: "graphics", parent_id: null, name_id: "Grafis", name_en: "Graphics", icon: "graphics", sort_order: 40 },
+  { id: "graphics", parent_id: null, name_id: "Desain Grafis", name_en: "Graphic Design", icon: "graphics", sort_order: 40 },
   { id: "audio-video", parent_id: null, name_id: "Audio & Video", name_en: "Audio & Video", icon: "audio", sort_order: 50 },
-  { id: "tools-plugins", parent_id: null, name_id: "Tools & Plugin", name_en: "Tools & Plugins", icon: "plugins", sort_order: 60 },
+  { id: "tools-plugins", parent_id: null, name_id: "Software & Tools", name_en: "Software & Tools", icon: "plugins", sort_order: 60 },
+  { id: "creative-services", parent_id: null, name_id: "Jasa Kreatif", name_en: "Creative Services", icon: "services", sort_order: 70 },
 ];
 
 export const getTopLevelCategories = cache(async (): Promise<Category[]> => {
