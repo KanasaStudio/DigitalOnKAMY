@@ -83,3 +83,18 @@ supabase/migrations/   schema, RLS, storage, reference data (already applied to 
 `node scripts/build-pages.mjs` membuat salinan statis mode demo di `./out` (data contoh, tanpa daftar/masuk asli,
 karena GitHub Pages tidak punya server). Workflow `.github/workflows/pages.yml` men-deploy-nya ke
 `https://kanasastudio.github.io/DigitalOnKAMY/`. Aplikasi sungguhan tetap `npm run dev` / Vercel.
+
+## Marketplace (redesign November 2026)
+
+Marketplace pelanggan dibangun mengikuti *KAMY Complete Digital Marketplace System* prompt:
+
+- Tipografi: Space Grotesk (display), Plus Jakarta Sans (teks), IBM Plex Mono (kode/metadata). Ikon diperbesar (22–40px).
+- Rute: `/` (homepage), `/products`, `/search`, `/categories`, `/category/[slug]`, `/category/[slug]/[sub]`,
+  `/collections/[featured|new|popular|discounts]`, `/product/[slug]`, `/creators`, `/c/[slug]`, `/cart`, `/wishlist`, `/checkout`.
+- Data katalog: `src/lib/market/catalog.ts`, **STAGING / TEST DATA** (7 kreator dan 26 produk fiktif, ulasan uji).
+  Taksonomi kategori sama dengan tabel `categories` di Supabase (7 kategori utama).
+- Keranjang dan wishlist disimpan di browser selama pratinjau; checkout menolak pembayaran secara eksplisit.
+- Semua halaman `noindex, nofollow` dan `robots.txt` menolak semua crawler.
+
+Belum dibangun: akun pelanggan (profil, pesanan, perpustakaan unduhan, tiket), pembayaran sandbox,
+admin (moderasi, CMS, keuangan, audit), serta katalog yang membaca tabel `products` di Supabase.

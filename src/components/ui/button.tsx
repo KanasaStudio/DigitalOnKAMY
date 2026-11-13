@@ -40,12 +40,12 @@ type CommonProps = {
 };
 
 function Inner({ icon, iconRight, loading, children, variant }: CommonProps) {
-  const leading = loading ? <Spinner /> : icon ? <Icon name={icon} size={16} /> : variant === "destructive" ? <Icon name="delete" size={16} /> : null;
+  const leading = loading ? <Spinner /> : icon ? <Icon name={icon} size={18} /> : variant === "destructive" ? <Icon name="delete" size={18} /> : null;
   return (
     <>
       {leading}
       <span>{children}</span>
-      {iconRight && !loading ? <Icon name={iconRight} size={16} /> : null}
+      {iconRight && !loading ? <Icon name={iconRight} size={18} /> : null}
     </>
   );
 }

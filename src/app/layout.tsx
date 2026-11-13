@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/manrope";
+import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
@@ -13,6 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { default: t("meta.title"), template: `%s · KAMY` },
     description: t("meta.description"),
+    // Private development: keep every page out of search engines.
+    robots: { index: false, follow: false, nocache: true },
   };
 }
 
