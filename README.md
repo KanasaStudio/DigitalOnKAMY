@@ -67,3 +67,13 @@ supabase/migrations/   schema, RLS, storage, reference data (already applied to 
 | 3 · Onboarding + storefront | Done |
 | 4 · Listing wizard | Next. Tables, RLS and storage are already in place |
 | 5–9 | Not started |
+
+
+## Lihat website tanpa domain (GitHub Codespaces)
+
+1. Buka repo di GitHub, pilih branch `feat/merchant-studio-foundation`.
+2. Klik **Code → Codespaces → Create codespace on feat/merchant-studio-foundation**.
+3. Tunggu instalasi selesai, lalu jalankan `npm run dev`. Tab browser untuk port 3000 akan terbuka.
+4. Di Supabase Dashboard → Authentication → URL Configuration, tambahkan Redirect URL
+   `https://*.app.github.dev/**` agar email konfirmasi kembali ke Codespace.
+   Site URL boleh tetap sementara sampai domain siap.
