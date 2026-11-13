@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/*
+ * KAMY design tokens.
+ * Five brand colors only. Every other tone below is the same palette mixed with
+ * transparency, so no extra hue ever enters the interface.
+ */
+@theme {
+  --color-obsidian: #090b0f;
+  --color-graphite: #202631;
+  --color-cloud: #f4f5f7;
+  --color-mint: #65e5d0;
+  --color-silver: #929ba8;
+
+  /* Derived surfaces and lines (palette + alpha, no new hues) */
+  --color-surface: color-mix(in srgb, #202631 45%, #090b0f);
+  --color-surface-raised: #202631;
+  --color-line: color-mix(in srgb, #f4f5f7 10%, transparent);
+  --color-line-strong: color-mix(in srgb, #f4f5f7 22%, transparent);
+  --color-mint-tint: color-mix(in srgb, #65e5d0 12%, transparent);
+  --color-mint-line: color-mix(in srgb, #65e5d0 45%, transparent);
+  --color-cloud-hover: color-mix(in srgb, #f4f5f7 6%, transparent);
+
+  --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --ease-out-quiet: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-ui: 180ms;
+  --duration-panel: 300ms;
+
+  --animate-sheet-in: sheet-in var(--duration-panel) var(--ease-out-quiet);
+  --animate-fade-in: fade-in var(--duration-ui) var(--ease-out-quiet);
+  --animate-slow-pulse: slow-pulse 2.4s ease-in-out infinite;
+
+  @keyframes sheet-in {
+    from { transform: translateY(12px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slow-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  html {
+    background: var(--color-obsidian);
+    color: var(--color-cloud);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--color-obsidian);
+  }
+  ::selection {
+    background: color-mix(in srgb, #65e5d0 30%, transparent);
+    color: var(--color-cloud);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-mint);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  input, textarea, select, button {
+    font: inherit;
+  }
+  [hidden] {
+    display: none !important;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-silver);
+  }
+  .scrollbar-quiet {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, #f4f5f7 18%, transparent) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
