@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Icon } from "@/components/icons/icon";
 import { MarketFooter } from "@/components/market/footer";
 import { MarketHeader, MobileTabBar } from "@/components/market/header";
+import { SoundControl } from "@/components/sound/sound-control";
 import { getTranslator } from "@/i18n/server";
 import { HOMEPAGE } from "@/lib/market/catalog";
 
@@ -23,9 +24,10 @@ export default async function MarketLayout({ children }: LayoutProps<"/">) {
             <span className="hidden items-center gap-1.5 md:inline-flex">
               <Icon name="globe" size={16} /> Indonesia · IDR
             </span>
-            <Link href="/studio/overview" className="hover:text-cloud">
+            <Link href="/studio/overview" data-sfx="transition" className="hidden hover:text-cloud sm:inline">
               {t("market.header.sell")}
             </Link>
+            <SoundControl />
           </div>
         </div>
       </div>

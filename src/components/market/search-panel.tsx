@@ -8,6 +8,7 @@ import { cn } from "@/components/ui/cn";
 import { useI18n } from "@/i18n/client";
 import { formatMoney } from "@/i18n/format";
 import { categoryHref, HOMEPAGE, suggest } from "@/lib/market/catalog";
+import { sound } from "@/lib/sound/sound-manager";
 import { ProductArt } from "./product-art";
 import { market, useMarket } from "./store";
 
@@ -91,11 +92,11 @@ export function SearchPanel({ initialQuery = "", className, autoFocus, compact }
           else submit();
         }}
         className={cn(
-          "flex h-12 items-center gap-2 rounded-[12px] border border-line-strong bg-surface pl-4 pr-1.5 transition-colors",
-          "focus-within:border-mint-line focus-within:bg-graphite",
+          "group/search flex h-12 items-center gap-2 rounded-[12px] border border-line-strong bg-surface pl-4 pr-1.5 transition-[border-color,background-color,box-shadow] duration-[var(--duration-dropdown)] ease-[var(--ease-standard)]",
+          "focus-within:border-mint-line focus-within:bg-graphite focus-within:shadow-[0_0_0_4px_color-mix(in_srgb,#65e5d0_10%,transparent)]",
         )}
       >
-        <Icon name="search" size={22} className="text-silver" />
+        <Icon name="search" size={22} className="text-silver transition-[color,transform] duration-[var(--duration-dropdown)] group-focus-within/search:scale-105 group-focus-within/search:text-mint" />
         <label htmlFor={`${listId}-input`} className="sr-only">
           {t("market.search.label")}
         </label>
@@ -119,7 +120,10 @@ export function SearchPanel({ initialQuery = "", className, autoFocus, compact }
             setOpen(true);
             setActive(-1);
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={() => {
+            if (!open) sound.play("panel-open");
+            setOpen(true);
+          }}
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
               e.preventDefault();
@@ -140,13 +144,13 @@ export function SearchPanel({ initialQuery = "", className, autoFocus, compact }
             <Icon name="close" size={18} />
           </button>
         ) : null}
-        <button type="submit" className="hidden h-9 items-center rounded-[9px] bg-mint px-4 text-sm font-semibold text-obsidian hover:bg-[color-mix(in_srgb,#65e5d0_82%,#f4f5f7)] sm:inline-flex">
+        <button type="submit" data-sfx="click-primary" className="cta cta-primary hidden h-9 items-center rounded-[9px] bg-mint px-4 text-sm font-semibold text-obsidian sm:inline-flex">
           {t("market.search.submit")}
         </button>
       </form>
 
       {open && options.length > 0 ? (
-        <div className="absolute inset-x-0 top-[calc(100%+6px)] z-50 max-h-[min(70vh,520px)] overflow-y-auto rounded-[14px] border border-line-strong bg-graphite p-2 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)] scrollbar-quiet">
+        <div className="absolute inset-x-0 top-[calc(100%+6px)] z-50 max-h-[min(70vh,520px)] animate-panel-in overflow-y-auto rounded-[14px] border border-line-strong bg-graphite p-2 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)] scrollbar-quiet">
           {!q.trim() && recent.length > 0 ? (
             <div className="flex justify-end px-2 pt-1">
               <button type="button" onClick={() => market.clearRecent()} className="text-xs text-silver underline-offset-2 hover:text-cloud hover:underline">
@@ -171,7 +175,7 @@ export function SearchPanel({ initialQuery = "", className, autoFocus, compact }
                       e.preventDefault();
                       go(o.href, o.key === "all" ? q : o.key.startsWith("p-") && !q.trim() ? o.key.slice(2) : undefined);
                     }}
-                    className={cn("flex min-h-11 items-center gap-3 rounded-[10px] px-2.5 py-1.5 text-sm text-cloud", active === i && "bg-cloud-hover")}
+                    className={cn("flex min-h-11 items-center gap-3 rounded-[10px] px-2.5 py-1.5 text-sm text-cloud transition-colors duration-[var(--duration-micro)]", active === i && "bg-cloud-hover")}
                   >
                     {o.node}
                   </Link>

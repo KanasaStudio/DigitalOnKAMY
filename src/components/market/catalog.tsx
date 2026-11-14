@@ -22,6 +22,7 @@ import {
   type LicenseId,
   type SortKey,
 } from "@/lib/market/catalog";
+import { sound } from "@/lib/sound/sound-manager";
 import { ProductCard } from "./product-card";
 
 const PAGE_SIZE = 12;
@@ -142,7 +143,10 @@ export function Catalog({ preset }: { preset: CatalogPreset }) {
               {t("market.catalog.results", { count: results.length })}
             </p>
             <div className="ml-auto flex items-center gap-2">
-              <button type="button" onClick={() => setFiltersOpen(true)} className="inline-flex h-11 items-center gap-2 rounded-[10px] border border-line-strong px-3.5 text-sm font-semibold text-cloud lg:hidden">
+              <button type="button" onClick={() => {
+                sound.play("panel-open");
+                setFiltersOpen(true);
+              }} className="inline-flex h-11 items-center gap-2 rounded-[10px] border border-line-strong px-3.5 text-sm font-semibold text-cloud lg:hidden">
                 <Icon name="filter" size={20} />
                 {t("market.catalog.filters")}
                 {chips.length ? <span className="grid size-5 place-items-center rounded-full bg-mint text-[11px] font-bold text-obsidian">{chips.length}</span> : null}
@@ -152,7 +156,10 @@ export function Catalog({ preset }: { preset: CatalogPreset }) {
                 <span className="relative">
                   <select
                     value={query.sort}
-                    onChange={(e) => update({ sort: e.target.value })}
+                    onChange={(e) => {
+                      sound.play("click-secondary");
+                      update({ sort: e.target.value });
+                    }}
                     className="h-11 appearance-none rounded-[10px] border border-line-strong bg-surface pl-3.5 pr-10 text-sm font-semibold text-cloud outline-none focus-visible:border-mint-line"
                   >
                     {SORT_KEYS.filter((k) => k !== "relevance" || q).map((k) => (
@@ -183,8 +190,8 @@ export function Catalog({ preset }: { preset: CatalogPreset }) {
 
           {visible.length ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 xl:grid-cols-4">
-              {visible.map((p) => (
-                <ProductCard key={p.slug} product={p} />
+              {visible.map((p, i) => (
+                <ProductCard key={p.slug} product={p} className="animate-page-in" style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }} />
               ))}
             </div>
           ) : (

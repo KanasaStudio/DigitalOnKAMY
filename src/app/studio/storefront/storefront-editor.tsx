@@ -151,7 +151,7 @@ export function StorefrontEditor({
       setBaseline(form);
       setRestored(false);
       setLastSaved("saved");
-      toast.show(t("storefront.saved"));
+      toast.show(t("storefront.saved"), { sound: "success" });
       router.refresh();
     });
   };
@@ -187,7 +187,7 @@ export function StorefrontEditor({
       if (cropKind === "avatar") setAvatarUrl(result.data.url);
       else setBannerUrl(result.data.url);
       setCropFile(null);
-      toast.show(t("storefront.saved"));
+      toast.show(t("storefront.saved"), { sound: "success" });
       router.refresh();
     } catch {
       toast.show(t("errors.uploadFailed"), { tone: "error" });

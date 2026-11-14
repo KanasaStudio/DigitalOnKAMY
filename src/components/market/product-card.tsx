@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { Icon } from "@/components/icons/icon";
 import { cn } from "@/components/ui/cn";
 import { useToast } from "@/components/ui/toast";
@@ -10,6 +11,7 @@ import { getCategory, getCreator, isNew, ratingFor, type Product } from "@/lib/m
 import { PriceDisplay } from "./price";
 import { ProductArt } from "./product-art";
 import { RatingDisplay } from "./rating";
+import { sound } from "@/lib/sound/sound-manager";
 import { market, useMarket } from "./store";
 
 export function WishlistButton({ slug, className, size = 20 }: { slug: string; className?: string; size?: number }) {
@@ -23,20 +25,23 @@ export function WishlistButton({ slug, className, size = 20 }: { slug: string; c
       aria-pressed={saved}
       aria-label={saved ? t("market.product.wishlistRemove") : t("market.product.wishlistAdd")}
       onClick={() => {
-        if (market.toggleWishlist(slug)) toast.show(t("market.product.wishlistAdded"), { tone: "success" });
+        if (market.toggleWishlist(slug)) {
+          sound.play("click-secondary");
+          toast.show(t("market.product.wishlistAdded"), { tone: "success" });
+        }
       }}
       className={cn(
-        "grid size-10 place-items-center rounded-full border border-line-strong bg-obsidian/70 text-cloud backdrop-blur transition-colors hover:border-cloud",
+        "grid size-10 place-items-center rounded-full border border-line-strong bg-obsidian/70 text-cloud backdrop-blur transition-[border-color,color,background-color,transform] duration-[var(--duration-micro)] hover:border-cloud active:scale-90",
         saved && "border-mint-line text-mint",
         className,
       )}
     >
-      <Icon name="heart" size={size} className={saved ? "fill-mint" : undefined} />
+      <Icon key={saved ? "on" : "off"} name="heart" size={size} className={cn("transition-[fill] duration-[var(--duration-button)]", saved ? "animate-heart-pop fill-mint" : "fill-transparent")} />
     </button>
   );
 }
 
-export function ProductCard({ product, className, priority }: { product: Product; className?: string; priority?: "dense" | "roomy" }) {
+export function ProductCard({ product, className, priority, style }: { product: Product; className?: string; priority?: "dense" | "roomy"; style?: CSSProperties }) {
   const { t, locale } = useI18n();
   const toast = useToast();
   const { cart } = useMarket();
@@ -47,15 +52,15 @@ export function ProductCard({ product, className, priority }: { product: Product
   const service = product.delivery === "manual";
 
   return (
-    <article className={cn("group relative flex flex-col overflow-hidden rounded-[14px] border border-line bg-surface transition-colors hover:border-line-strong", className)}>
+    <article style={style} className={cn("group relative flex flex-col overflow-hidden rounded-[14px] border border-line bg-surface transition-[border-color,background-color,transform] duration-[var(--duration-product)] ease-[var(--ease-out-quiet)] hover:border-line-strong hover:bg-[color-mix(in_srgb,#202631_62%,#090b0f)] pointer-coarse:active:scale-[0.985]", className)}>
       <div className="relative aspect-[4/3] overflow-hidden bg-graphite">
-        <ProductArt {...product.art} className="size-full transition-transform duration-500 ease-[var(--ease-out-quiet)] group-hover:scale-[1.03]" />
+        <ProductArt {...product.art} className="size-full transition-transform duration-[var(--duration-reveal)] ease-[var(--ease-out-quiet)] group-hover:scale-[1.035]" />
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
           {product.salePrice ? <span className="rounded-md bg-mint px-2 py-1 text-xs font-bold text-obsidian">-{Math.round((1 - product.salePrice / product.price) * 100)}%</span> : null}
           {isNew(product) ? <span className="rounded-md border border-cloud/40 bg-obsidian/75 px-2 py-1 text-xs font-semibold text-cloud backdrop-blur">{t("market.product.new")}</span> : null}
           {service ? <span className="rounded-md border border-cloud/40 bg-obsidian/75 px-2 py-1 text-xs font-semibold text-cloud backdrop-blur">{t("market.product.service")}</span> : null}
         </div>
-        <WishlistButton slug={product.slug} className="absolute right-3 top-3 z-10" />
+        <WishlistButton slug={product.slug} className="absolute right-3 top-3 z-10 pointer-fine:opacity-80 pointer-fine:group-hover:opacity-100 focus-visible:opacity-100" />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-3.5 sm:p-4">
         <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-silver">{sub ? (locale === "en" ? sub.name.en : sub.name.id) : null}</p>
@@ -75,15 +80,16 @@ export function ProductCard({ product, className, priority }: { product: Product
             type="button"
             onClick={() => {
               market.addToCart(product.slug, product.licenses[0]);
+              sound.play("add-to-cart");
               toast.show(t("market.product.added", { title: product.title }), { tone: "success" });
             }}
             aria-label={inCart ? t("market.product.inCart") : `${t("market.product.addToCart")}: ${product.title}`}
             className={cn(
-              "relative z-10 grid size-10 shrink-0 place-items-center rounded-[10px] border transition-colors",
-              inCart ? "border-mint-line bg-mint-tint text-mint" : "border-line-strong text-cloud hover:border-mint-line hover:text-mint",
+              "relative z-10 grid size-10 shrink-0 place-items-center rounded-[10px] border transition-[border-color,color,background-color,transform] duration-[var(--duration-button)] active:scale-90",
+              inCart ? "border-mint-line bg-mint-tint text-mint" : "border-line-strong text-cloud hover:border-mint-line hover:text-mint pointer-fine:group-hover:border-cloud/40",
             )}
           >
-            <Icon name={inCart ? "check" : "cart"} size={22} />
+            <Icon key={inCart ? "in" : "out"} name={inCart ? "check" : "cart"} size={22} className="animate-fade-in" />
           </button>
         </div>
       </div>

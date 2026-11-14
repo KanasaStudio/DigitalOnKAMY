@@ -9,6 +9,7 @@ import { useI18n } from "@/i18n/client";
 import { formatMoney } from "@/i18n/format";
 import { licensePrice, type LicenseId, type Product } from "@/lib/market/catalog";
 import { ProductArt } from "./product-art";
+import { sound } from "@/lib/sound/sound-manager";
 import { market, useMarket } from "./store";
 import { WishlistButton } from "./product-card";
 
@@ -19,7 +20,7 @@ export function ProductGallery({ product }: { product: Product }) {
   return (
     <section aria-label={t("market.product.gallery")}>
       <div className="relative overflow-hidden rounded-[18px] border border-line bg-graphite">
-        <ProductArt {...product.art} variant={variants[index]} className="aspect-[4/3] w-full" label={t("market.product.previewOf", { n: index + 1 })} />
+        <ProductArt key={index} {...product.art} variant={variants[index]} className="aspect-[4/3] w-full animate-fade-in" label={t("market.product.previewOf", { n: index + 1 })} />
         <span className="absolute bottom-3 left-3 rounded border border-dashed border-silver/60 bg-obsidian/70 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-silver backdrop-blur">
           {t("market.staging.short")}
         </span>
@@ -29,10 +30,13 @@ export function ProductGallery({ product }: { product: Product }) {
           <button
             key={v}
             type="button"
-            onClick={() => setIndex(i)}
+            onClick={() => {
+              if (i !== index) sound.play("click-secondary");
+              setIndex(i);
+            }}
             aria-label={t("market.product.previewOf", { n: i + 1 })}
             aria-pressed={i === index}
-            className={cn("overflow-hidden rounded-[10px] border-2 transition-colors", i === index ? "border-mint" : "border-transparent opacity-70 hover:opacity-100")}
+            className={cn("overflow-hidden rounded-[10px] border-2 transition-[border-color,opacity] duration-[var(--duration-button)]", i === index ? "border-mint" : "border-transparent opacity-70 hover:opacity-100")}
           >
             <ProductArt {...product.art} variant={v} className="aspect-[4/3] w-full" />
           </button>
@@ -61,11 +65,14 @@ export function PurchasePanel({ product }: { product: Product }) {
             <label
               key={l}
               className={cn(
-                "flex cursor-pointer items-start gap-3 rounded-[12px] border p-3.5 transition-colors",
+                "flex cursor-pointer items-start gap-3 rounded-[12px] border p-3.5 transition-[border-color,background-color] duration-[var(--duration-button)] ease-[var(--ease-standard)]",
                 license === l ? "border-mint bg-mint-tint" : "border-line-strong hover:border-cloud/50",
               )}
             >
-              <input type="radio" name="license" value={l} checked={license === l} onChange={() => setLicense(l)} className="mt-1 size-[18px] shrink-0 accent-[#65e5d0]" />
+              <input type="radio" name="license" value={l} checked={license === l} onChange={() => {
+                  sound.play("click-secondary");
+                  setLicense(l);
+                }} className="mt-1 size-[18px] shrink-0 accent-[#65e5d0]" />
               <span className="min-w-0 flex-1">
                 <span className="flex items-baseline justify-between gap-3">
                   <span className="font-semibold text-cloud">{t(`market.product.licenses.${l}`)}</span>
@@ -89,14 +96,15 @@ export function PurchasePanel({ product }: { product: Product }) {
             type="button"
             onClick={() => {
               market.addToCart(product.slug, license);
+              sound.play("add-to-cart");
               toast.show(t("market.product.added", { title: product.title }), { tone: "success" });
             }}
             className={cn(
-              "inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[10px] border text-[15px] font-semibold transition-colors",
+              "cta inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-[10px] border text-[15px] font-semibold",
               inCart ? "border-mint-line bg-mint-tint text-mint" : "border-line-strong text-cloud hover:border-cloud",
             )}
           >
-            <Icon name={inCart ? "check" : "cart"} size={22} />
+            <Icon key={inCart ? "in" : "out"} name={inCart ? "check" : "cart"} size={22} className="animate-fade-in" />
             {inCart ? t("market.product.inCart") : t("market.product.addToCart")}
           </button>
           <WishlistButton slug={product.slug} className="size-12 rounded-[10px] bg-transparent" size={22} />
@@ -107,7 +115,9 @@ export function PurchasePanel({ product }: { product: Product }) {
             market.addToCart(product.slug, license);
             router.push("/checkout");
           }}
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-[10px] bg-mint text-[15px] font-semibold text-obsidian hover:bg-[color-mix(in_srgb,#65e5d0_82%,#f4f5f7)]"
+          data-sfx="click-primary"
+          data-sfx-hover
+          className="cta cta-primary inline-flex h-12 items-center justify-center gap-2 rounded-[10px] bg-mint text-[15px] font-semibold text-obsidian"
         >
           {t("market.product.buyNow")}
           <Icon name="arrowRight" size={20} />

@@ -395,6 +395,18 @@ const en: Messages = {
       viewCategory: "View all {name}",
     },
     nav: { home: "Home", categories: "Categories", search: "Search", cart: "Cart", account: "Account" },
+    sound: {
+      label: "SOUND FX",
+      on: "On",
+      off: "Off",
+      settings: "Interface sound settings",
+      enable: "Sound effects",
+      volume: "Volume",
+      hover: "Sound when hovering buttons",
+      notifications: "Notification sounds",
+      unavailable: "The sound files aren't in this build yet, so nothing plays.",
+      note: "Sound is off by default and only plays after you turn it on.",
+    },
     helpCenter: "Help centre",
     staging: {
       label: "STAGING / TEST DATA",
