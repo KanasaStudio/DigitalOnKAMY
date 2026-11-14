@@ -3,11 +3,15 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/icons/icon";
 import { useI18n } from "@/i18n/client";
+import { sound, type SoundId } from "@/lib/sound/sound-manager";
 import { cn } from "./cn";
 
 type ToastTone = "success" | "info" | "error";
 type ToastItem = { id: number; tone: ToastTone; message: string; action?: { label: string; onClick: () => void } };
-type ToastApi = { show: (message: string, options?: { tone?: ToastTone; action?: ToastItem["action"] }) => void };
+type ToastApi = {
+  /** `sound`: error toasts play the error cue by default; pass "success" only when an operation really succeeded. */
+  show: (message: string, options?: { tone?: ToastTone; action?: ToastItem["action"]; sound?: SoundId | false }) => void;
+};
 
 const ToastContext = createContext<ToastApi | null>(null);
 const ICON: Record<ToastTone, IconName> = { success: "success", info: "info", error: "error" };
@@ -21,6 +25,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const show = useCallback<ToastApi["show"]>(
     (message, options) => {
       const id = nextId.current++;
+      const cue = options?.sound ?? (options?.tone === "error" ? "error" : false);
+      if (cue) sound.play(cue);
       setItems((list) => [...list.slice(-2), { id, message, tone: options?.tone ?? "success", action: options?.action }]);
       window.setTimeout(() => dismiss(id), options?.tone === "error" ? 9000 : 5000);
     },

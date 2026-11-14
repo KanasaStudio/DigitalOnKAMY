@@ -30,13 +30,28 @@
   --radius-lg: 14px;
   --radius-xl: 20px;
 
+  /* Motion tokens (prompt §04). One easing family, no bounce. */
   --ease-out-quiet: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-ui: 180ms;
   --duration-panel: 300ms;
+  --duration-micro: 150ms;
+  --duration-button: 200ms;
+  --duration-dropdown: 220ms;
+  --duration-product: 260ms;
+  --duration-reveal: 480ms;
+  --duration-page: 320ms;
+  --distance-reveal: 14px;
+  --distance-panel: 6px;
 
   --animate-sheet-in: sheet-in var(--duration-panel) var(--ease-out-quiet);
   --animate-fade-in: fade-in var(--duration-ui) var(--ease-out-quiet);
   --animate-slow-pulse: slow-pulse 2.4s ease-in-out infinite;
+  --animate-page-in: page-in var(--duration-page) var(--ease-out-quiet) both;
+  --animate-panel-in: panel-in var(--duration-dropdown) var(--ease-out-quiet) both;
+  --animate-count-bump: count-bump 320ms var(--ease-out-quiet);
+  --animate-heart-pop: heart-pop 280ms var(--ease-out-quiet);
 
   @keyframes sheet-in {
     from { transform: translateY(12px); opacity: 0; }
@@ -45,6 +60,24 @@
   @keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
+  }
+  @keyframes page-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes panel-in {
+    from { opacity: 0; transform: translateY(calc(var(--distance-panel) * -1)); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes count-bump {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.22); }
+    100% { transform: scale(1); }
+  }
+  @keyframes heart-pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.14); }
+    100% { transform: scale(1); }
   }
   @keyframes slow-pulse {
     0%, 100% { opacity: 1; }
@@ -134,7 +167,50 @@
   }
 }
 
+/* Scroll reveal: hidden only once the motion script has marked the document, so content
+   never stays invisible without JavaScript. One-time by default. */
+html[data-motion="on"] [data-reveal]:not([data-revealed]) {
+  opacity: 0;
+  transform: translateY(var(--distance-reveal));
+}
+[data-reveal] {
+  transition:
+    opacity var(--duration-reveal) var(--ease-out-quiet),
+    transform var(--duration-reveal) var(--ease-out-quiet);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Primary and secondary call-to-action feedback (§07). */
+.cta {
+  transition:
+    background-color var(--duration-button) var(--ease-standard),
+    border-color var(--duration-button) var(--ease-standard),
+    color var(--duration-button) var(--ease-standard),
+    box-shadow var(--duration-button) var(--ease-standard),
+    transform var(--duration-micro) var(--ease-standard),
+    filter var(--duration-button) var(--ease-standard);
+}
+.cta > svg:last-child {
+  transition: transform var(--duration-button) var(--ease-out-quiet);
+}
+@media (hover: hover) {
+  .cta:hover > svg:last-child {
+    transform: translateX(3px);
+  }
+  .cta-primary:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 0 0 4px color-mix(in srgb, #65e5d0 16%, transparent);
+  }
+}
+.cta:active {
+  transform: scale(0.98);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html[data-motion="on"] [data-reveal]:not([data-revealed]) {
+    opacity: 1;
+    transform: none;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

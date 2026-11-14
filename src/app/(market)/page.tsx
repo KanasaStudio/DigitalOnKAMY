@@ -7,6 +7,8 @@ import { ProductArt } from "@/components/market/product-art";
 import { ProductCard } from "@/components/market/product-card";
 import { PromoBanner } from "@/components/market/promo-banner";
 import { Container, SectionHeader } from "@/components/market/section";
+import { PointerField } from "@/components/motion/pointer-field";
+import { reveal } from "@/components/motion/reveal";
 import { getTranslator } from "@/i18n/server";
 import { formatNumber } from "@/i18n/format";
 import { getMessages } from "@/i18n/core";
@@ -62,31 +64,31 @@ export default async function HomePage() {
         <div className="grid gap-4 lg:grid-cols-[minmax(0,2.15fr)_minmax(0,1fr)]">
           <PromoBanner />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <Link href="/studio/onboarding" className="group relative flex flex-col justify-between overflow-hidden rounded-[20px] border border-mint-line bg-[linear-gradient(140deg,color-mix(in_srgb,#65e5d0_16%,#202631),#090b0f_75%)] p-6">
+            <Link href="/studio/onboarding" data-sfx="transition" data-sfx-hover className="cta group relative flex flex-col justify-between overflow-hidden rounded-[20px] border border-mint-line bg-[linear-gradient(140deg,color-mix(in_srgb,#65e5d0_16%,#202631),#090b0f_75%)] p-6">
               <div>
-                <Icon name="store" size={36} className="text-mint" />
+                <Icon name="store" size={36} className="text-mint transition-transform duration-[var(--duration-product)] ease-[var(--ease-out-quiet)] group-hover:-translate-y-0.5" />
                 <h2 className="mt-4 font-display text-[26px] font-semibold leading-tight text-cloud">{t("market.home.sellTitle")}</h2>
                 <p className="mt-2 max-w-[30ch] text-sm leading-relaxed text-silver">{t("market.home.sellBody")}</p>
               </div>
               <span className="mt-5 inline-flex items-center gap-2 text-[15px] font-semibold text-mint group-hover:underline">
                 {t("market.home.sellCta")}
-                <Icon name="arrowRight" size={20} />
+                <Icon name="arrowRight" size={20} className="transition-transform duration-[var(--duration-button)] group-hover:translate-x-1" />
               </span>
             </Link>
-            <Link href="/collections/discounts" className="group flex items-center gap-4 rounded-[20px] border border-line bg-surface p-5 transition-colors hover:border-line-strong">
-              <div className="grid size-16 shrink-0 place-items-center rounded-[14px] bg-mint text-obsidian">
+            <Link href="/collections/discounts" data-sfx-hover className="group flex items-center gap-4 rounded-[20px] border border-line bg-surface p-5 transition-colors duration-[var(--duration-product)] hover:border-line-strong active:scale-[0.99]">
+              <div className="grid size-16 shrink-0 place-items-center rounded-[14px] bg-mint text-obsidian transition-transform duration-[var(--duration-product)] ease-[var(--ease-out-quiet)] group-hover:rotate-[-6deg]">
                 <Icon name="tag" size={32} />
               </div>
               <div className="min-w-0">
                 <h2 className="font-display text-xl font-semibold text-cloud">{t("market.home.dealsTitle")}</h2>
                 <p className="mt-0.5 text-sm text-silver">{t("market.home.dealsBody", { count: discounted().length })}</p>
               </div>
-              <Icon name="chevronRight" size={22} className="ml-auto text-silver group-hover:text-cloud" />
+              <Icon name="chevronRight" size={22} className="ml-auto text-silver transition-[color,transform] duration-[var(--duration-button)] group-hover:translate-x-1 group-hover:text-cloud" />
             </Link>
           </div>
         </div>
 
-        <ul className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[16px] border border-line bg-line lg:grid-cols-4">
+        <ul data-reveal className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-[16px] border border-line bg-line lg:grid-cols-4">
           {trust.map((item) => (
             <li key={item.title} className="flex items-start gap-3 bg-obsidian p-4 md:p-5">
               <Icon name={item.icon} size={28} className="mt-0.5 text-mint" />
@@ -102,27 +104,34 @@ export default async function HomePage() {
       <Container className="mt-16">
         <SectionHeader title={t("market.home.categoriesTitle")} body={t("market.home.categoriesBody")} href="/categories" linkLabel={t("market.home.viewAll")} />
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          <Link href={categoryHref(lead)} className="group relative col-span-2 row-span-2 flex min-h-[260px] flex-col justify-end overflow-hidden rounded-[18px] border border-line">
+          <Link href={categoryHref(lead)} data-sfx-hover {...reveal(0)} className="group relative col-span-2 row-span-2 flex min-h-[260px] flex-col justify-end overflow-hidden rounded-[18px] border border-line">
             <ProductArt {...leadProduct.art} variant={3} className="absolute inset-0 size-full transition-transform duration-700 group-hover:scale-[1.03]" />
             <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/50 to-transparent" />
             <div className="relative p-6">
-              <Icon name={lead.icon as IconName} size={40} className="text-mint" />
+              <Icon name={lead.icon as IconName} size={40} className="text-mint transition-transform duration-[var(--duration-product)] ease-[var(--ease-out-quiet)] group-hover:-translate-y-1" />
               <p className="mt-3 font-mono text-[11px] uppercase tracking-[0.1em] text-silver">
                 {lead.code} · {t("market.home.productsCount", { count: countInCategory(lead.id) })}
               </p>
-              <h3 className="mt-1 font-display text-[30px] font-semibold leading-tight text-cloud">{name(lead)}</h3>
+              <h3 className="mt-1 flex items-center gap-2 font-display text-[30px] font-semibold leading-tight text-cloud">
+                {name(lead)}
+                <Icon name="arrowRight" size={26} className="-translate-x-1 opacity-0 transition-[opacity,transform] duration-[var(--duration-button)] group-hover:translate-x-0 group-hover:opacity-100" />
+              </h3>
               <p className="mt-1 max-w-[40ch] text-sm text-silver">{lead.description ? (locale === "en" ? lead.description.en : lead.description.id) : null}</p>
             </div>
           </Link>
           {tops.slice(1).map((c, i) => (
-            <Link key={c.id} href={categoryHref(c)} className={`${i >= 4 ? "md:col-span-2 " : ""}group flex min-h-[124px] flex-col justify-between gap-4 rounded-[18px] border border-line bg-surface p-4 transition-colors hover:border-mint-line md:p-5`}>
+            <Link key={c.id} href={categoryHref(c)} data-sfx-hover {...reveal(i + 1)} className={`${i >= 4 ? "md:col-span-2 " : ""}group flex min-h-[124px] flex-col justify-between gap-4 rounded-[18px] border border-line bg-surface p-4 transition-colors hover:border-mint-line md:p-5`}>
               <div className="flex items-start justify-between">
-                <Icon name={c.icon as IconName} size={36} className="text-cloud transition-colors group-hover:text-mint" />
+                <Icon name={c.icon as IconName} size={36} className="text-cloud transition-[color,transform] duration-[var(--duration-product)] ease-[var(--ease-out-quiet)] group-hover:-translate-y-0.5 group-hover:scale-105 group-hover:text-mint" />
                 <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-silver">{c.code}</span>
               </div>
               <div>
-                <h3 className="font-display text-lg font-semibold leading-tight text-cloud">{name(c)}</h3>
-                <p className="mt-1 text-xs text-silver">{t("market.home.productsCount", { count: countInCategory(c.id) })}</p>
+                <h3 className="flex items-center gap-1.5 font-display text-lg font-semibold leading-tight text-cloud">
+                  {name(c)}
+                  <Icon name="arrowRight" size={18} className="-translate-x-1 text-mint opacity-0 transition-[opacity,transform] duration-[var(--duration-button)] group-hover:translate-x-0 group-hover:opacity-100" />
+                </h3>
+                <span aria-hidden className="mt-1.5 block h-0.5 w-0 rounded-full bg-mint transition-[width] duration-[var(--duration-product)] ease-[var(--ease-out-quiet)] group-hover:w-8" />
+                <p className="mt-1.5 text-xs text-silver">{t("market.home.productsCount", { count: countInCategory(c.id) })}</p>
               </div>
             </Link>
           ))}
@@ -131,7 +140,7 @@ export default async function HomePage() {
 
       <Container className="mt-16">
         <SectionHeader title={t("market.home.featuredTitle")} body={t("market.home.featuredBody")} href="/collections/featured" linkLabel={t("market.home.viewAll")} />
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-5">
+        <div data-reveal className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-5">
           {featured.map((p) => (
             <ProductCard key={p.slug} product={p} />
           ))}
@@ -142,9 +151,11 @@ export default async function HomePage() {
         <SectionHeader title={t("market.home.bestTitle")} body={t("market.home.bestBody")} href="/collections/popular" linkLabel={t("market.home.viewAll")} />
         <ol className="grid grid-cols-[minmax(0,1fr)] gap-x-8 md:grid-cols-2 xl:grid-cols-3">
           {best.map((p, i) => (
-            <li key={p.slug} className="group relative flex items-center gap-4 border-t border-line py-4">
-              <span className="tabular w-12 shrink-0 font-display text-[40px] font-bold leading-none tracking-[-0.04em] text-silver/50 group-hover:text-mint">{String(i + 1).padStart(2, "0")}</span>
-              <ProductArt {...p.art} className="h-[68px] w-[90px] shrink-0 rounded-[10px]" />
+            <li key={p.slug} {...reveal(i)} className="group relative flex items-center gap-4 border-t border-line py-4">
+              <span className="tabular w-12 shrink-0 font-display text-[40px] font-bold leading-none tracking-[-0.04em] text-silver/50 transition-colors duration-[var(--duration-product)] group-hover:text-mint">{String(i + 1).padStart(2, "0")}</span>
+              <div className="h-[68px] w-[90px] shrink-0 overflow-hidden rounded-[10px]">
+                <ProductArt {...p.art} className="size-full transition-transform duration-[var(--duration-reveal)] ease-[var(--ease-out-quiet)] group-hover:scale-[1.06]" />
+              </div>
               <div className="min-w-0 flex-1">
                 <h3 className="truncate font-semibold text-cloud">
                   <Link href={`/product/${p.slug}`} className="after:absolute after:inset-0">
@@ -163,24 +174,29 @@ export default async function HomePage() {
 
       <Container className="mt-16">
         <SectionHeader title={t("market.home.newTitle")} body={t("market.home.newBody")} href="/collections/new" linkLabel={t("market.home.viewAll")} className="pr-0 md:pr-28" />
+        <div data-reveal>
         <ProductCarousel label={t("market.home.newTitle")}>
           {fresh.map((p) => (
             <ProductCard key={p.slug} product={p} className="w-[72%] shrink-0 snap-start sm:w-[44%] md:w-[31%] lg:w-[23.6%]" />
           ))}
         </ProductCarousel>
+        </div>
       </Container>
 
       <Container className="mt-16">
         <SectionHeader title={t("market.home.creatorsTitle")} body={t("market.home.creatorsBody")} href="/creators" linkLabel={t("market.home.viewAll")} />
         <div className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-4">
-          {spotlight.map((c) => (
-            <CreatorCard key={c.slug} creator={c} t={t} locale={locale} />
+          {spotlight.map((c, i) => (
+            <div key={c.slug} {...reveal(i)}>
+              <CreatorCard creator={c} t={t} locale={locale} />
+            </div>
           ))}
         </div>
       </Container>
 
       <Container className="mt-16">
-        <section className="relative overflow-hidden rounded-[22px] border border-line bg-surface">
+        <section data-reveal className="relative overflow-hidden rounded-[22px] border border-line bg-surface">
+          <PointerField particles={0} className="h-full">
           <div className="pointer-events-none absolute -right-24 -top-24 size-[420px] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,#65e5d0_22%,transparent),transparent_65%)]" aria-hidden />
           <div className="relative grid gap-8 p-6 md:p-10 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:p-12">
             <div>
@@ -188,24 +204,25 @@ export default async function HomePage() {
               <h2 className="mt-3 max-w-[18ch] type-page text-cloud">{t("market.home.joinTitle")}</h2>
               <p className="mt-4 max-w-[48ch] text-[15px] leading-relaxed text-silver">{t("market.home.joinBody")}</p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/studio/onboarding" className="inline-flex h-12 items-center gap-2 rounded-[10px] bg-mint px-5 text-[15px] font-semibold text-obsidian hover:bg-[color-mix(in_srgb,#65e5d0_82%,#f4f5f7)]">
+                <Link href="/studio/onboarding" data-sfx="transition" data-sfx-hover className="cta cta-primary inline-flex h-12 items-center gap-2 rounded-[10px] bg-mint px-5 text-[15px] font-semibold text-obsidian">
                   {t("market.home.joinCta")}
                   <Icon name="arrowRight" size={20} />
                 </Link>
-                <Link href="/creators" className="inline-flex h-12 items-center gap-2 rounded-[10px] border border-line-strong px-5 text-[15px] font-semibold text-cloud hover:border-cloud">
+                <Link href="/creators" data-sfx="click-secondary" data-sfx-hover className="cta inline-flex h-12 items-center gap-2 rounded-[10px] border border-line-strong px-5 text-[15px] font-semibold text-cloud hover:border-cloud hover:bg-cloud-hover">
                   {t("market.home.joinSecondary")}
                 </Link>
               </div>
             </div>
             <ol className="grid gap-3">
               {messages.market.home.joinSteps.map((step, i) => (
-                <li key={step} className="flex items-center gap-4 rounded-[14px] border border-line bg-obsidian/60 p-4">
+                <li key={step} {...reveal(i + 1, 90)} className="flex items-center gap-4 rounded-[14px] border border-line bg-obsidian/60 p-4">
                   <span className="grid size-11 shrink-0 place-items-center rounded-full border border-mint-line font-display text-lg font-semibold text-mint">{i + 1}</span>
                   <span className="text-[15px] text-cloud">{step}</span>
                 </li>
               ))}
             </ol>
           </div>
+          </PointerField>
         </section>
       </Container>
     </>

@@ -4,6 +4,8 @@ import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
+import { MOTION_BOOT_SCRIPT, RevealObserver } from "@/components/motion/reveal-observer";
+import { SoundBridge } from "@/components/sound/sound-bridge";
 import { ToastProvider } from "@/components/ui/toast";
 import { I18nProvider } from "@/i18n/client";
 import { createTranslator } from "@/i18n/core";
@@ -27,8 +29,14 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const locale = await getLocale();
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        {/* Sets motion and pointer mode before first paint (no flash, no hidden content without JS). */}
+        <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT_SCRIPT }} />
+      </head>
       <body>
+        <RevealObserver />
+        <SoundBridge />
         <I18nProvider locale={locale}>
           <ToastProvider>{children}</ToastProvider>
         </I18nProvider>

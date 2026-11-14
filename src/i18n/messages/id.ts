@@ -394,6 +394,18 @@ const id = {
       viewCategory: "Lihat semua {name}",
     },
     nav: { home: "Beranda", categories: "Kategori", search: "Cari", cart: "Keranjang", account: "Akun" },
+    sound: {
+      label: "SOUND FX",
+      on: "Aktif",
+      off: "Mati",
+      settings: "Pengaturan suara antarmuka",
+      enable: "Efek suara",
+      volume: "Volume",
+      hover: "Suara saat kursor di atas tombol",
+      notifications: "Suara notifikasi",
+      unavailable: "File suara belum tersedia di versi ini, jadi belum ada yang terdengar.",
+      note: "Suara mati secara bawaan dan hanya diputar setelah kamu menyalakannya.",
+    },
     helpCenter: "Pusat bantuan",
     staging: {
       label: "STAGING / TEST DATA",
