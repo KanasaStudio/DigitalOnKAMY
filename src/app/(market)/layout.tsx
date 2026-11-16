@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Icon } from "@/components/icons/icon";
 import { MarketFooter } from "@/components/market/footer";
 import { MarketHeader, MobileTabBar } from "@/components/market/header";
+import { MarketSync } from "@/components/market/market-sync";
 import { SoundControl } from "@/components/sound/sound-control";
 import { getTranslator } from "@/i18n/server";
+import { getViewer } from "@/lib/auth/account-context";
 import { HOMEPAGE } from "@/lib/market/catalog";
 
 export default async function MarketLayout({ children }: LayoutProps<"/">) {
-  const { t } = await getTranslator();
+  const [{ t }, viewer] = await Promise.all([getTranslator(), getViewer()]);
+  const account = viewer ? { name: viewer.displayName } : null;
   return (
     <div className="flex min-h-dvh flex-col">
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-mint focus:px-4 focus:py-2 focus:text-obsidian">
@@ -31,12 +34,13 @@ export default async function MarketLayout({ children }: LayoutProps<"/">) {
           </div>
         </div>
       </div>
-      <MarketHeader />
+      <MarketSync signedIn={viewer !== null} />
+      <MarketHeader account={account} />
       <main id="main" className="flex-1">
         {children}
       </main>
       <MarketFooter t={t} />
-      <MobileTabBar />
+      <MobileTabBar account={account} />
     </div>
   );
 }

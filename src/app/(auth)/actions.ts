@@ -74,17 +74,18 @@ export async function signUpAction(_prev: AuthState, formData: FormData): Promis
   const invalid = fieldErrors(email, password);
   if (invalid) return { fieldErrors: invalid };
 
+  const next = safeNext(formData.get("next"), "/studio/onboarding");
   const supabase = await createSupabaseServerClient();
   const normalizedEmail = String(email).trim().toLowerCase();
   const { data, error } = await supabase.auth.signUp({
     email: normalizedEmail,
     password: String(password),
     options: {
-      emailRedirectTo: `${SITE_URL}/auth/confirm?next=/studio/onboarding`,
+      emailRedirectTo: `${SITE_URL}/auth/confirm?next=${encodeURIComponent(next)}`,
       data: { display_name: displayName || undefined, locale: await getLocale() },
     },
   });
   if (error) return { error: authErrorKey(error.code) };
-  if (data.session) redirect("/studio/onboarding");
+  if (data.session) redirect(next);
   return { checkEmail: normalizedEmail };
 }

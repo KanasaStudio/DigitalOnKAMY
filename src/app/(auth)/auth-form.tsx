@@ -105,7 +105,7 @@ export function AuthForm({ mode, next, demo }: { mode: "sign-in" | "sign-up"; ne
 
       <p className="text-sm text-silver">
         {mode === "sign-in" ? t("auth.noAccount") : t("auth.haveAccount")}{" "}
-        <Link href={mode === "sign-in" ? "/sign-up" : "/sign-in"} className="font-semibold text-cloud underline decoration-line-strong underline-offset-4 hover:decoration-mint">
+        <Link href={`${mode === "sign-in" ? "/sign-up" : "/sign-in"}${next && next !== "/studio/overview" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-semibold text-cloud underline decoration-line-strong underline-offset-4 hover:decoration-mint">
           {mode === "sign-in" ? t("auth.submitSignUp") : t("auth.submitSignIn")}
         </Link>
       </p>

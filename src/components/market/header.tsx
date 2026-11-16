@@ -25,7 +25,9 @@ function HeaderAction({ href, icon, label, count }: { href: string; icon: IconNa
   );
 }
 
-export function MarketHeader() {
+export type HeaderAccount = { name: string } | null;
+
+export function MarketHeader({ account }: { account: HeaderAccount }) {
   const { t } = useI18n();
   const { cart, wishlist } = useMarket();
   const ref = useRef<HTMLElement>(null);
@@ -65,10 +67,17 @@ export function MarketHeader() {
           </Link>
           <HeaderAction href="/wishlist" icon="heart" label={t("market.header.wishlist")} count={wishlist.length} />
           <HeaderAction href="/cart" icon="cart" label={t("market.header.cart")} count={cart.length} />
-          <Link href="/sign-in" data-sfx="click-primary" data-sfx-hover className="cta cta-primary ml-2 hidden h-11 items-center gap-2 rounded-[10px] bg-mint px-4 text-sm font-semibold text-obsidian sm:inline-flex">
-            {t("market.header.signIn")}
-            <Icon name="arrowRight" size={18} />
-          </Link>
+          {account ? (
+            <Link href="/account" data-sfx-hover aria-label={`${t("market.header.account")}: ${account.name}`} className="ml-2 hidden h-11 max-w-[180px] items-center gap-2 rounded-[10px] border border-line-strong px-3 text-sm font-semibold text-cloud hover:bg-cloud-hover sm:inline-flex">
+              <Icon name="user" size={20} className="shrink-0" />
+              <span className="truncate">{account.name}</span>
+            </Link>
+          ) : (
+            <Link href="/sign-in?next=/account" data-sfx="click-primary" data-sfx-hover className="cta cta-primary ml-2 hidden h-11 items-center gap-2 rounded-[10px] bg-mint px-4 text-sm font-semibold text-obsidian sm:inline-flex">
+              {t("market.header.signIn")}
+              <Icon name="arrowRight" size={18} />
+            </Link>
+          )}
         </nav>
       </div>
       <div className="px-4 pb-3 md:hidden">
@@ -177,7 +186,7 @@ function CategoryNav() {
   );
 }
 
-export function MobileTabBar() {
+export function MobileTabBar({ account }: { account: HeaderAccount }) {
   const { t } = useI18n();
   const pathname = usePathname();
   const { cart } = useMarket();
@@ -186,7 +195,7 @@ export function MobileTabBar() {
     { href: "/categories", icon: "grid", label: t("market.nav.categories"), match: (p) => p.startsWith("/categor") },
     { href: "/search", icon: "search", label: t("market.nav.search"), match: (p) => p.startsWith("/search") || p.startsWith("/products") },
     { href: "/cart", icon: "cart", label: t("market.nav.cart"), match: (p) => p.startsWith("/cart") || p.startsWith("/checkout"), count: cart.length },
-    { href: "/sign-in", icon: "user", label: t("market.nav.account"), match: (p) => p.startsWith("/sign") },
+    { href: account ? "/account" : "/sign-in?next=/account", icon: "user", label: t("market.nav.account"), match: (p) => p.startsWith("/sign") || p.startsWith("/account") },
   ];
   return (
     <nav aria-label={t("market.header.home")} className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-obsidian/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden">
