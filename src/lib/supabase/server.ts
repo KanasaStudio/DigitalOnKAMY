@@ -15,6 +15,8 @@ export async function createSupabaseServerClient() {
   const clientIp =
     headerStore.get("x-real-ip") ?? headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "";
   const userAgent = headerStore.get("user-agent") ?? "";
+  const forwardedId = headerStore.get("x-request-id") ?? headerStore.get("x-vercel-id") ?? "";
+  const requestId = /^[\w:.-]{8,64}$/.test(forwardedId) ? forwardedId : crypto.randomUUID();
 
   return createServerClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     cookies: {
@@ -33,6 +35,8 @@ export async function createSupabaseServerClient() {
       headers: {
         "x-kamy-client-ip": clientIp.slice(0, 64),
         "x-kamy-user-agent": userAgent.slice(0, 300),
+        // Correlates every audit row written during this request.
+        "x-kamy-request-id": requestId,
       },
     },
   });

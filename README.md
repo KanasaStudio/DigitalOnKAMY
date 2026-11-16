@@ -96,5 +96,37 @@ Marketplace pelanggan dibangun mengikuti *KAMY Complete Digital Marketplace Syst
 - Keranjang dan wishlist disimpan di browser selama pratinjau; checkout menolak pembayaran secara eksplisit.
 - Semua halaman `noindex, nofollow` dan `robots.txt` menolak semua crawler.
 
-Belum dibangun: akun pelanggan (profil, pesanan, perpustakaan unduhan, tiket), pembayaran sandbox,
-admin (moderasi, CMS, keuangan, audit), serta katalog yang membaca tabel `products` di Supabase.
+## Fase 1: akun pelanggan, keranjang tersinkron, fondasi admin (November 2026)
+
+Migrasi `20261116160000_customer_accounts_admin_foundation.sql` sudah diterapkan ke Kamy Project.
+
+- **Akun pelanggan**: `/account` (profil), `/account/orders`, `/account/library`. Semua butuh sesi; proxy
+  mengalihkan tamu ke `/sign-in?next=...` dan setiap halaman memverifikasi sesi lagi di server.
+- **Keranjang dan wishlist**: tamu tetap memakai `localStorage`. Setelah masuk, `MarketSync` menggabungkan
+  isi browser ke `cart_items` dan `wishlist_items`, lalu setiap perubahan ditulis lewat server action
+  (`src/app/(market)/market-actions.ts`). Server memeriksa ulang produk dan lisensi ke katalog; harga dari
+  browser tidak pernah dipakai.
+- **Pesanan**: tabel `orders`, `order_items`, `order_status_history`. Klien hanya bisa membaca. Perpindahan
+  status dijaga trigger database (`pending_payment → pending_delivery → delivered → completed`, plus
+  `cancelled` dan `refunded`); cerminnya untuk UI ada di `src/lib/commerce/order-status.ts`.
+  Belum ada yang membuat pesanan: itu tugas checkout di Fase 2.
+- **Perpustakaan unduhan**: `request_download()` memeriksa kepemilikan dan pembayaran, membatasi 60 unduhan
+  per jam, dan mencatat unduhan. Server lalu membuat signed URL berumur 60 detik dari bucket privat
+  `product-files`. Tidak memakai service-role key.
+- **Admin**: `/admin` (ringkasan) dan `/admin/audit`. Pengguna tanpa peran mendapat 404. Tidak ada
+  pendaftaran admin; beri peran lewat SQL Editor:
+
+  ```sql
+  insert into public.platform_admins (user_id, role, note)
+  select id, 'superadmin', 'admin pertama' from auth.users where email = 'EMAIL_KAMU';
+  ```
+
+  Peran: `support` < `moderator` < `finance` < `superadmin`. Pemberian dan pencabutan peran tercatat di
+  `audit_log`.
+- **Katalog**: `getProductRepository()` (`src/lib/market/get-repository.ts`) memilih penyedia data lewat
+  `KAMY_CATALOG_SOURCE` (`staging` bawaan, atau `supabase`). Kode server baru sudah memakainya. Komponen
+  marketplace lama masih mengimpor `catalog.ts` langsung dan belum dipindah.
+- **Tes**: `npm test` (node:test, 22 tes logika murni), `npm run typecheck`, `npm run lint`.
+
+Belum dibangun: checkout dan KanasaToken, voucher, ulasan, tiket, pembayaran sandbox, modul admin
+(moderasi, CMS, keuangan, suara), unggah avatar pelanggan, dan pemindahan komponen marketplace ke repository katalog.

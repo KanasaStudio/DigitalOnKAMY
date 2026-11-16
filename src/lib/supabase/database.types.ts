@@ -25,6 +25,7 @@ export type Database = {
           ip: string | null
           merchant_id: string | null
           metadata: Json
+          request_id: string | null
           user_agent: string | null
         }
         Insert: {
@@ -448,6 +449,195 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          license: string
+          product_id: string | null
+          product_ref: string
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          license: string
+          product_ref: string
+          quantity?: number
+        }
+        Update: {
+          license?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      download_events: {
+        Row: {
+          created_at: string
+          id: number
+          product_file_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: never
+        }
+        Update: {
+          id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "download_events_product_file_id_fkey"
+            columns: ["product_file_id"]
+            isOneToOne: false
+            referencedRelation: "product_files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          delivery_status: Database["public"]["Enums"]["delivery_status"]
+          id: string
+          license: string
+          line_total: number
+          merchant_id: string | null
+          order_id: string
+          product_id: string | null
+          product_ref: string
+          quantity: number
+          title: string
+          unit_price: number
+        }
+        Insert: {
+          id?: never
+        }
+        Update: {
+          id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "merchants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_status_history: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          from_status: Database["public"]["Enums"]["order_status"] | null
+          id: number
+          order_id: string
+          reason: string | null
+          to_status: Database["public"]["Enums"]["order_status"]
+        }
+        Insert: {
+          id?: never
+        }
+        Update: {
+          id?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          closed_at: string | null
+          completed_at: string | null
+          currency: string
+          customer_id: string
+          discount_total: number
+          id: string
+          idempotency_key: string | null
+          order_number: string
+          paid_at: string | null
+          payment_method: string | null
+          placed_at: string
+          status: Database["public"]["Enums"]["order_status"]
+          subtotal: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          id?: never
+        }
+        Update: {
+          id?: never
+        }
+        Relationships: []
+      }
+      platform_admins: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          note: string | null
+          role: Database["public"]["Enums"]["platform_role"]
+          user_id: string
+        }
+        Insert: {
+          user_id?: never
+        }
+        Update: {
+          user_id?: never
+        }
+        Relationships: []
+      }
+      wishlist_items: {
+        Row: {
+          created_at: string
+          product_id: string | null
+          product_ref: string
+          user_id: string
+        }
+        Insert: {
+          product_ref: string
+        }
+        Update: {
+          product_ref?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -457,6 +647,7 @@ export type Database = {
         Args: { p_document: string; p_merchant: string }
         Returns: string
       }
+      admin_overview: { Args: never; Returns: Json }
       create_merchant: {
         Args: {
           p_slug: string
@@ -468,14 +659,45 @@ export type Database = {
         Returns: string
       }
       is_slug_available: { Args: { p_slug: string }; Returns: boolean }
+      my_library: {
+        Args: never
+        Returns: {
+          file_id: string
+          filename: string
+          license: string
+          order_item_id: string
+          order_number: string
+          product_ref: string
+          purchased_at: string
+          size_bytes: number
+          title: string
+          version_label: string
+        }[]
+      }
+      request_download: {
+        Args: { p_file: string }
+        Returns: {
+          filename: string
+          storage_key: string
+        }[]
+      }
     }
     Enums: {
       delivery_method: "instant_download" | "access_link" | "manual"
+      delivery_status: "pending" | "available" | "delivered" | "revoked"
       media_kind: "image" | "video_link" | "model_3d" | "audio" | "document_page"
       member_role: "owner" | "admin" | "editor" | "support" | "viewer"
       member_status: "invited" | "active" | "removed"
       merchant_type: "individual" | "studio"
+      order_status:
+        | "pending_payment"
+        | "pending_delivery"
+        | "delivered"
+        | "completed"
+        | "cancelled"
+        | "refunded"
       payout_state: "not_connected" | "pending" | "connected" | "restricted"
+      platform_role: "support" | "moderator" | "finance" | "superadmin"
       policy_kind: "seller_agreement" | "ownership_declaration"
       product_status:
         | "draft"

@@ -41,6 +41,22 @@ export type AuthState = { error?: MessageKey; fieldErrors?: Partial<Record<"emai
 export async function signInAction(_p: AuthState, _f: FormData): Promise<AuthState> { return { error: "errors.generic" }; }
 export async function signUpAction(_p: AuthState, _f: FormData): Promise<AuthState> { return { error: "errors.generic" }; }
 `);
+w("src/app/(market)/market-actions.ts", `export type MarketFailure = "guest" | "invalid" | "unavailable" | "full";
+type Line = { slug: string; license: "personal" | "commercial" | "extended" | "service" };
+export type MarketSyncResult = { ok: true; cart: Line[]; wishlist: string[] } | { ok: false; reason: MarketFailure };
+export type MarketWriteResult = { ok: true } | { ok: false; reason: MarketFailure };
+const GUEST = { ok: false as const, reason: "guest" as const };
+export async function syncMarketAction(_i: unknown): Promise<MarketSyncResult> { return GUEST; }
+export async function setCartLineAction(_i: unknown): Promise<MarketWriteResult> { return GUEST; }
+export async function removeCartLineAction(_i: unknown): Promise<MarketWriteResult> { return GUEST; }
+export async function setWishlistAction(_s: unknown, _w: boolean): Promise<MarketWriteResult> { return GUEST; }
+`);
+w("src/app/(market)/account/actions.ts", `import type { MessageKey } from "@/i18n/core";
+export type ProfileState = { saved?: boolean; error?: MessageKey; fieldError?: MessageKey };
+export type DownloadResult = { ok: true; url: string } | { ok: false; error: MessageKey };
+export async function updateProfileAction(_p: ProfileState, _f: FormData): Promise<ProfileState> { return { error: "demo.writesDisabled" }; }
+export async function requestDownloadAction(_f: unknown): Promise<DownloadResult> { return { ok: false, error: "demo.writesDisabled" }; }
+`);
 w("src/app/actions/locale.ts", `export async function setLocaleAction(locale: string): Promise<void> { try { localStorage.setItem("kamy_locale", locale); } catch {} }
 export async function setRailCollapsedAction(_c: boolean): Promise<void> {}
 `);
